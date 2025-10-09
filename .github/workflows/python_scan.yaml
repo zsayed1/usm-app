@@ -1,5 +1,9 @@
 # .github/workflows/python-scan.yaml
-name: CI - Python Checks & Security
+name: CI - Python Security & Quality
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
 
 on:
   push:
