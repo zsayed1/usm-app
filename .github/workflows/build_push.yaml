@@ -1,0 +1,26 @@
+name: Build and Push USM App to ECR (on PR merge to dev)
+
+on:
+  push:
+    branches:
+      - dev
+      - master
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: usm-app
+
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/conf
