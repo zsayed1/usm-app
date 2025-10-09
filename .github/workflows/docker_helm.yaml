@@ -1,20 +1,10 @@
 name: CI - Docker Build & Helm Validation
 
 on:
-  push:
-    branches:
-      - main
-      - dev
-      - stage
-      - "feature/**"
-      - "bugfix/**"
-  pull_request:
-    branches:
-      - main
-      - dev
-      - stage
-      - "feature/**"
-      - "bugfix/**"
+  workflow_run:
+    workflows: ["CI - Python Security & Quality"]
+    types:
+      - completed
 
 jobs:
   docker-helm:
