@@ -67,4 +67,25 @@ jobs:
       - name: Update Helm values.yaml (repo & tag)
         run: |
           # Update tag
-          sed -i 's|tag: ".*"|tag: "'"$IMAGE*
+          sed -i 's|tag: ".*"|tag: "'"$IMAGE_TAG"'"|' "$CHART_PATH/values.yaml"
+          # Update repository (ensures it matches account/region)
+          sed -i 's|repository: ".*"|repository: "'"$ECR_REGISTRY/$ECR_REPOSITORY"'"|' "$CHART_PATH/values.yaml"
+
+      - name: Update Helm chart version & appVersion
+        run: |
+          sed -i 's|^version:.*|version: '"$CHART_VERSION"'|' "$CHART_PATH/Chart.yaml"
+          sed -i 's|^appVersion:.*|appVersion: "'"$IMAGE_TAG"'"|' "$CHART_PATH/Chart.yaml"
+
+      - name: Package Helm chart
+        run: |
+          helm lint "$CHART_PATH"
+          mkdir -p packaged
+          helm package "$CHART_PATH" --destination packaged
+          echo "Packaged charts:"
+          ls -l packaged
+
+      - name: Push Helm chart to ECR (OCI)
+        run: |
+          CHART_FILE=$(ls packaged/usm-app-*.tgz)
+          echo "Pushing chart $CHART_FILE to oci://$HELM_REGISTRY"
+          helm push "$CHART_FILE" "oci://$HELM_REGISTRY"
