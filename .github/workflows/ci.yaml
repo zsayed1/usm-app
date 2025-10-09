@@ -46,8 +46,10 @@ jobs:
       # - name: Run pip-audit (Dependency CVE scan)
       #   run: pip-audit
 
-      - name: Run Safety (extra dependency check)
-        run: safety check || echo "⚠️ Safety found vulnerabilities"
+      - name: Run Safety vulnerability scan
+        run: |
+          pip install safety
+          safety scan || echo "⚠️ Safety found vulnerabilities"
 
       # ---------------------------
       # 🐳 Docker build validation
@@ -74,14 +76,13 @@ jobs:
       - name: Run Checkov on Helm chart
         run: checkov -d charts/usm-app || echo "⚠️ Checkov found issues"
 
-      - name: Install kube-linter
+      - name: Install KubeLinter
         run: |
-          curl -s https://api.github.com/repos/stackrox/kube-linter/releases/latest \
-          | grep "browser_download_url.*linux.*amd64" \
-          | cut -d '"' -f 4 \
-          | wget -qi -
-          tar -xzf kube-linter*.tar.gz
-          sudo mv kube-linter /usr/local/bin/
+          KUBE_LINTER_VERSION=$(curl -s https://api.github.com/repos/stackrox/kube-linter/releases/latest | jq -r .tag_name)
+          curl -L "https://github.com/stackrox/kube-linter/releases/download/${KUBE_LINTER_VERSION}/kube-linter-${KUBE_LINTER_VERSION}-linux-amd64.tar.gz" -o kube-linter.tar.gz
+          tar -xzf kube-linter.tar.gz
+          sudo mv kube-linter /usr/local/bin/kube-linter
+
 
       - name: Run kube-linter on Helm manifests
         run: kube-linter lint charts/usm-app || echo "⚠️ kube-linter found issues"
