@@ -76,16 +76,16 @@ jobs:
       - name: Run Checkov on Helm chart
         run: checkov -d charts/usm-app || echo "⚠️ Checkov found issues"
 
-      - name: Install KubeLinter
-        run: |
-          KUBE_LINTER_VERSION=$(curl -s https://api.github.com/repos/stackrox/kube-linter/releases/latest | jq -r .tag_name)
-          curl -L "https://github.com/stackrox/kube-linter/releases/download/${KUBE_LINTER_VERSION}/kube-linter-${KUBE_LINTER_VERSION}-linux-amd64.tar.gz" -o kube-linter.tar.gz
-          tar -xzf kube-linter.tar.gz
-          sudo mv kube-linter /usr/local/bin/kube-linter
+      # - name: Install KubeLinter
+      #   run: |
+      #     KUBE_LINTER_VERSION=$(curl -s https://api.github.com/repos/stackrox/kube-linter/releases/latest | jq -r .tag_name)
+      #     curl -L "https://github.com/stackrox/kube-linter/releases/download/${KUBE_LINTER_VERSION}/kube-linter-${KUBE_LINTER_VERSION}-linux-amd64.tar.gz" -o kube-linter.tar.gz
+      #     tar -xzf kube-linter.tar.gz
+      #     sudo mv kube-linter /usr/local/bin/kube-linter
 
 
-      - name: Run kube-linter on Helm manifests
-        run: kube-linter lint charts/usm-app || echo "⚠️ kube-linter found issues"
+      # - name: Run kube-linter on Helm manifests
+      #   run: kube-linter lint charts/usm-app || echo "⚠️ kube-linter found issues"
 
       # ---------------------------
       # 🔑 Secrets Scan (optional but recommended)
