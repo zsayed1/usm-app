@@ -2,12 +2,20 @@
 name: CI - Python Checks & Security
 
 on:
-  pull_request:
+  push:
     branches:
+      - main
       - dev
       - stage
+      - "feature/**"
+      - "bugfix/**"
+  pull_request:
+    branches:
       - main
-
+      - dev
+      - stage
+      - "feature/**"
+      - "bugfix/**"
 jobs:
   python-scan:
     runs-on: ubuntu-latest
