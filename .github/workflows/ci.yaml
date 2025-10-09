@@ -11,9 +11,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # ---------------------------
+      # 📥 Checkout code
+      # ---------------------------
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # ---------------------------
+      # 🐍 Python setup & testing
+      # ---------------------------
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -24,7 +30,6 @@ jobs:
           python -m pip install --upgrade pip
           pip --version
 
-
       - name: Install dependencies and run tests
         run: |
           if [ -f requirements.txt ]; then
@@ -33,7 +38,7 @@ jobs:
           pytest || echo "⚠️ No tests found or some failed (non-blocking for CI)"
 
       # ---------------------------
-      #  Python Security Scans
+      # 🔐 Python Security Scans
       # ---------------------------
 
       - name: Install Python security tools
@@ -43,13 +48,13 @@ jobs:
       - name: Run Bandit (SAST)
         run: bandit -r .
 
-      # - name: Run pip-audit (Dependency CVE scan)
-      #   run: pip-audit
-
       - name: Run Safety vulnerability scan
         run: |
-          pip install safety
           safety scan || echo "⚠️ Safety found vulnerabilities"
+
+      # Uncomment if you want dependency CVE scanning:
+      # - name: Run pip-audit (Dependency CVE scan)
+      #   run: pip-audit || echo "⚠️ pip-audit found vulnerabilities"
 
       # ---------------------------
       # 🐳 Docker build validation
@@ -57,6 +62,17 @@ jobs:
 
       - name: Build Docker image (test only)
         run: docker build -t test-usm-app .
+
+      # ---------------------------
+      # 🛡️ Docker Image Vulnerability Scan (Trivy)
+      # ---------------------------
+      - name: Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: test-usm-app
+          format: table
+          exit-code: 0         # ✅ Report vulnerabilities but don't fail build
+          ignore-unfixed: true
 
       # ---------------------------
       # ⚓ Helm and Kubernetes Scans
@@ -76,6 +92,7 @@ jobs:
       - name: Run Checkov on Helm chart
         run: checkov -d charts/usm-app || echo "⚠️ Checkov found issues"
 
+      # ✅ Optional: Enable kube-linter for deep manifest checks
       # - name: Install KubeLinter
       #   run: |
       #     KUBE_LINTER_VERSION=$(curl -s https://api.github.com/repos/stackrox/kube-linter/releases/latest | jq -r .tag_name)
@@ -83,12 +100,11 @@ jobs:
       #     tar -xzf kube-linter.tar.gz
       #     sudo mv kube-linter /usr/local/bin/kube-linter
 
-
       # - name: Run kube-linter on Helm manifests
       #   run: kube-linter lint charts/usm-app || echo "⚠️ kube-linter found issues"
 
       # ---------------------------
-      # 🔑 Secrets Scan (optional but recommended)
+      # 🔑 Secrets Scanning
       # ---------------------------
 
       - name: Run Gitleaks Secret Scan
