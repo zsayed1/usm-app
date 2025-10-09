@@ -2,7 +2,7 @@ name: CI - Docker Build & Helm Validation
 
 on:
   workflow_run:
-    workflows: ["CI - Python Security & Quality"]
+    workflows: ["CI - Python Checks & Security"]
     types:
       - completed
 
