@@ -1,0 +1,29 @@
+replicaCount: 2
+
+image:
+  repository: 879381282588.dkr.ecr.us-east-1.amazonaws.com/usm-app
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: usm-app.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
