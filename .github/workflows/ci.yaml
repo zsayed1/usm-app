@@ -1,4 +1,4 @@
-name: CI - Validate App
+name: CI - Validate and Scan App
 
 on:
   push:
@@ -26,13 +26,63 @@ jobs:
           fi
           pytest || echo "⚠️ No tests found or some failed (non-blocking for CI)"
 
+      # ---------------------------
+      # 🛡️ Python Security Scans
+      # ---------------------------
+
+      - name: Install Python security tools
+        run: |
+          pip install bandit pip-audit safety
+
+      - name: Run Bandit (SAST)
+        run: bandit -r .
+
+      - name: Run pip-audit (Dependency CVE scan)
+        run: pip-audit
+
+      - name: Run Safety (extra dependency check)
+        run: safety check || echo "⚠️ Safety found vulnerabilities"
+
+      # ---------------------------
+      # 🐳 Docker build validation
+      # ---------------------------
+
       - name: Build Docker image (test only)
         run: docker build -t test-usm-app .
+
+      # ---------------------------
+      # ⚓ Helm and Kubernetes Scans
+      # ---------------------------
 
       - name: Set up Helm
         uses: azure/setup-helm@v3
         with:
           version: v3.14.0
 
-      - name: Lint Helm chart
+      - name: Helm lint
         run: helm lint charts/usm-app
+
+      - name: Install Checkov for Helm scan
+        run: pip install checkov
+
+      - name: Run Checkov on Helm chart
+        run: checkov -d charts/usm-app || echo "⚠️ Checkov found issues"
+
+      - name: Install kube-linter
+        run: |
+          curl -s https://api.github.com/repos/stackrox/kube-linter/releases/latest \
+          | grep "browser_download_url.*linux.*amd64" \
+          | cut -d '"' -f 4 \
+          | wget -qi -
+          tar -xzf kube-linter*.tar.gz
+          sudo mv kube-linter /usr/local/bin/
+
+      - name: Run kube-linter on Helm manifests
+        run: kube-linter lint charts/usm-app || echo "⚠️ kube-linter found issues"
+
+      # ---------------------------
+      # 🔑 Secrets Scan (optional but recommended)
+      # ---------------------------
+
+      - name: Run Gitleaks secret scan
+        uses: zricethezav/gitleaks-action@v2
