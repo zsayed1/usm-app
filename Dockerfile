@@ -1,17 +1,10 @@
-# Use a lightweight Python image
 FROM python:3.11-slim
 
-# Set working directory
 WORKDIR /app
+COPY . .
 
-# Copy application files
-COPY app.py .
+RUN pip install --no-cache-dir flask python-dotenv
 
-# Install Flask
-RUN pip install flask
-
-# Expose port
 EXPOSE 8080
 
-# Run app
 CMD ["python", "app.py"]
