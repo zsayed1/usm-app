@@ -1,19 +1,19 @@
-# name: Build and Push USM App to ECR
+name: Build and Push USM App to ECR
 
-# on:
-#   push:
-#     branches:
-#       - dev
+on:
+  push:
+    branches:
+      - dev
 
-# permissions:
-#   id-token: write
-#   contents: read
+permissions:
+  id-token: write
+  contents: read
 
-# env:
-#   AWS_REGION: us-east-1
-#   ECR_REPOSITORY: usm-app
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: usm-app
 
-# jobs:
+jobs:
 #   build-push:
 #     runs-on: ubuntu-latest
 #     steps:
