@@ -98,3 +98,6 @@ jobs:
           CHART_FILE=$(ls packaged/usm-app-*.tgz)
           echo "📦 Pushing $CHART_FILE to oci://$HELM_REGISTRY"
           helm push $CHART_FILE oci://$HELM_REGISTRY
+
+
+
