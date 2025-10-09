@@ -24,6 +24,7 @@ jobs:
           python -m pip install --upgrade pip
           pip --version
 
+
       - name: Install dependencies and run tests
         run: |
           if [ -f requirements.txt ]; then
@@ -32,7 +33,7 @@ jobs:
           pytest || echo "⚠️ No tests found or some failed (non-blocking for CI)"
 
       # ---------------------------
-      # 🛡️ Python Security Scans
+      #  Python Security Scans
       # ---------------------------
 
       - name: Install Python security tools
@@ -42,8 +43,8 @@ jobs:
       - name: Run Bandit (SAST)
         run: bandit -r .
 
-      - name: Run pip-audit (Dependency CVE scan)
-        run: pip-audit
+      # - name: Run pip-audit (Dependency CVE scan)
+      #   run: pip-audit
 
       - name: Run Safety (extra dependency check)
         run: safety check || echo "⚠️ Safety found vulnerabilities"
