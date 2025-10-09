@@ -1,0 +1,29 @@
+name: CI - Validate App
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies and run tests
+        run: |
+          pip install -r requirements.txt
+          pytest
+
+      - name: Build Docker image (test only)
+        run: docker build -t test-usm-app .
+
+      - name: Lint Helm chart
+        run: helm lint charts/usm-app
