@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - dev
   workflow_dispatch:
 
 permissions:
@@ -41,9 +42,12 @@ jobs:
       - name: Package Helm chart
         run: |
           helm lint $CHART_PATH
-          helm package $CHART_PATH --destination .
+          helm package $CHART_PATH --destination packaged
+          echo "📦 Packaged chart:"
+          ls -l packaged/
 
       - name: Push Helm chart to ECR
         run: |
-          CHART_FILE=$(ls usm-app-*.tgz)
+          CHART_FILE=$(ls packaged/usm-app-*.tgz)
+          echo "Pushing $CHART_FILE to oci://$HELM_REGISTRY"
           helm push $CHART_FILE oci://$HELM_REGISTRY
