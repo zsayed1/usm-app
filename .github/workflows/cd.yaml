@@ -36,6 +36,7 @@ jobs:
             echo "CHART_VERSION=0.1.${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
           fi
 
+
       - name: 🔐 Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
