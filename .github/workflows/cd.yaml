@@ -20,7 +20,7 @@ env:
   AWS_REGION: us-east-1
   ECR_REGISTRY: 879381282588.dkr.ecr.us-east-1.amazonaws.com
   ECR_APP_REPOSITORY: usm-app
-  HELM_REPOSITORY: 879381282588.dkr.ecr.us-east-1.amazonaws.com/helm-usm-app
+  HELM_REPOSITORY: 879381282588.dkr.ecr.us-east-1.amazonaws.com
   CHART_PATH: charts/helm-usm-app   # 👈 updated to match new chart directory name
 
 jobs:
