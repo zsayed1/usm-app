@@ -1,5 +1,5 @@
 apiVersion: v2
-name: usm-app
+name: helm-usm-app
 description: A Helm chart for deploying the usm-python-app microservice
 type: application
 version: 0.1.1

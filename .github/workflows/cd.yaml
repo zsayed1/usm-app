@@ -1,8 +1,16 @@
 name: CD - Build & Push Docker Image & Helm Chart
 
+# on:
+#   push:
+#     branches:
+#       - dev
+#       - master
+#   workflow_dispatch:
+
 on:
   push:
     branches:
+
       - dev
       - main
   workflow_dispatch:
@@ -13,9 +21,10 @@ permissions:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY: usm-app
-  HELM_REGISTRY: 879381282588.dkr.ecr.us-east-1.amazonaws.com/helm-usm-app
-  CHART_PATH: charts/usm-app
+  ECR_REGISTRY: 879381282588.dkr.ecr.us-east-1.amazonaws.com
+  ECR_APP_REPOSITORY: usm-app
+  HELM_REPOSITORY: 879381282588.dkr.ecr.us-east-1.amazonaws.com
+  CHART_PATH: charts/helm-usm-app   # 👈 updated to match new chart directory name
 
 jobs:
   # 🐳 Docker Build & Push
@@ -42,8 +51,7 @@ jobs:
           role-to-assume: arn:aws:iam::879381282588:role/usm-dev-github-actions-role
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: 🔑 Login to Amazon ECR
-        id: login-ecr
+      - name: 🔑 Login to Amazon ECR (Docker)
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: 📤 Expose ECR registry
@@ -51,11 +59,15 @@ jobs:
 
       - name: 🐳 Build & push Docker image
         run: |
-          echo "🚀 Building image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-          docker build -t "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" .
-          docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-          docker tag "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" "$ECR_REGISTRY/$ECR_REPOSITORY:latest"
-          docker push "$ECR_REGISTRY/$ECR_REPOSITORY:latest"
+          echo "🚀 Building image: $ECR_REGISTRY/$ECR_APP_REPOSITORY:$IMAGE_TAG"
+          docker build -t "$ECR_REGISTRY/$ECR_APP_REPOSITORY:$IMAGE_TAG" .
+          docker push "$ECR_REGISTRY/$ECR_APP_REPOSITORY:$IMAGE_TAG"
+
+          # Optional: Tag latest ONLY for master builds
+          if [ "$BRANCH" = "master" ]; then
+            docker tag "$ECR_REGISTRY/$ECR_APP_REPOSITORY:$IMAGE_TAG" "$ECR_REGISTRY/$ECR_APP_REPOSITORY:latest"
+            docker push "$ECR_REGISTRY/$ECR_APP_REPOSITORY:latest"
+          fi
 
   # ⚓ Helm Package & Push
   helm-package-push:
@@ -98,4 +110,7 @@ jobs:
           echo "📦 Pushing $CHART_FILE to oci://$HELM_REGISTRY"
           helm push $CHART_FILE oci://$HELM_REGISTRY
 
+          CHART_FILE=$(ls packaged/helm-usm-app-*.tgz)
+          echo "📦 Chart file: $CHART_FILE"
+          echo "📤 Pushing chart to oci://$HELM_REPOSITORY"
 
