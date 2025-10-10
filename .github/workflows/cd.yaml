@@ -13,7 +13,7 @@ permissions:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY: usm-app
+  ECR_REPOSITORY: usm-apps
   HELM_REGISTRY: 879381282588.dkr.ecr.us-east-1.amazonaws.com/helm
   CHART_PATH: charts/usm-app
 
