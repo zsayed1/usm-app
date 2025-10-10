@@ -17,7 +17,6 @@ env:
   HELM_REGISTRY: 879381282588.dkr.ecr.us-east-1.amazonaws.com/helm/usm-apps
   CHART_PATH: charts/usm-app
 
-
 jobs:
   # 🐳 Docker Build & Push
   docker-build-push:
