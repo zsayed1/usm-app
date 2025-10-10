@@ -1,11 +1,16 @@
 name: CD - Build & Push Docker Image & Helm Chart
 
+# on:
+#   push:
+#     branches:
+#       - dev
+#       - main
+#   workflow_dispatch:
+
 on:
   push:
     branches:
-      - dev
-      - main
-  workflow_dispatch:
+      - "**"
 
 permissions:
   id-token: write

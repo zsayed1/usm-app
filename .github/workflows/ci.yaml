@@ -1,9 +1,9 @@
 name: CI - Python & Docker + Helm
 
-on:
-  push:
-    branches:
-      - "**"
+# on:
+#   push:
+#     branches:
+#       - "**"
 
 jobs:
   python-scan:
