@@ -51,6 +51,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: 🔑 Login to Amazon ECR (Docker)
+        id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: 📤 Expose ECR registry
