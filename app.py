@@ -1,18 +1,22 @@
-import os
 from flask import Flask
+import threading
+import time
+import os
 
 app = Flask(__name__)
 
 @app.route("/")
-def home():
-    #  Optional: Show version if provided
-    version = os.getenv("APP_VERSION", "unknown")
-    return f"Hello, World from ECR + GitHub Actions! (Version: {version})"
+def health():
+    return "OK", 200
+
+def self_destruct():
+    time.sleep(180)  # wait 3 minutes
+    print("💥 Simulating fatal error...")
+    os._exit(1)      # forcefully terminate the process
 
 if __name__ == "__main__":
-    #  Read host and port from environment variables, with safe defaults
-    host = os.getenv("APP_HOST", "127.0.0.1")
-    port = int(os.getenv("APP_PORT", 8080))
+    threading.Thread(target=self_destruct, daemon=True).start()
 
-    #  Run Flask using env-provided values (overridden in container / CI/CD)
+    host = os.getenv("FLASK_BIND_HOST", "127.0.0.1")  # default safer
+    port = int(os.getenv("FLASK_PORT", 8080))
     app.run(host=host, port=port)
