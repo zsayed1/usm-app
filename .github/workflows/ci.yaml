@@ -1,9 +1,9 @@
 name: CI - Python & Docker + Helm
 
-# on:
-#   push:
-#     branches:
-#       - "**"
+on:
+  push:
+    branches:
+      - "**"
 
 jobs:
   python-scan:
@@ -38,4 +38,4 @@ jobs:
         with:
           version: v3.14.0
       - name: Helm lint
-        run: helm lint charts/usm-app
+        run: helm lint charts/helm-usm-app
