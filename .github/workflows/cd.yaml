@@ -10,7 +10,6 @@ name: CD - Build & Push Docker Image & Helm Chart
 on:
   push:
     branches:
-
       - dev
       - main
   workflow_dispatch:
@@ -52,6 +51,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: 🔑 Login to Amazon ECR (Docker)
+        id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: 📤 Expose ECR registry
@@ -106,9 +106,9 @@ jobs:
         run: |
           mkdir -p packaged
           helm package $CHART_PATH --version "$CHART_VERSION" --destination packaged
-          CHART_FILE=$(ls packaged/usm-app-*.tgz)
-          echo "📦 Pushing $CHART_FILE to oci://$HELM_REGISTRY"
-          helm push $CHART_FILE oci://$HELM_REGISTRY
+          CHART_FILE=$(ls packaged/helm-usm-app-*.tgz)
+          echo "📦 Pushing $CHART_FILE to oci://$HELM_REPOSITORY"
+          helm push $CHART_FILE oci://$HELM_REPOSITORY
 
           CHART_FILE=$(ls packaged/helm-usm-app-*.tgz)
           echo "📦 Chart file: $CHART_FILE"
