@@ -10,7 +10,6 @@ name: CD - Build & Push Docker Image & Helm Chart
 on:
   push:
     branches:
-
       - dev
       - main
   workflow_dispatch:
