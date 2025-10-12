@@ -38,4 +38,4 @@ jobs:
         with:
           version: v3.14.0
       - name: Helm lint
-        run: helm lint charts/usm-app
+        run: helm lint charts/helm-usm-app
