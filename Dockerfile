@@ -7,4 +7,4 @@ RUN pip install --no-cache-dir flask python-dotenv
 
 EXPOSE 8080
 
-CMD ["python", "doesnotexists.py"]
+CMD ["python", "app.py"]
