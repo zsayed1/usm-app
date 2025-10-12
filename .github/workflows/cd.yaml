@@ -92,6 +92,11 @@ jobs:
         with:
           version: v3.14.0
 
+      - name: 🔑 Test Helm login manually
+        run: |
+          aws ecr get-login-password --region us-east-1 | helm registry login \
+            --username AWS --password-stdin 879381282588.dkr.ecr.us-east-1.amazonaws.com
+
       - name: 📦 Package & Push Helm Chart
         run: |
           mkdir -p packaged
