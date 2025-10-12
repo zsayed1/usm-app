@@ -5,6 +5,7 @@ on:
     branches:
       - dev
       - master
+      - feature/brokenApp
   workflow_dispatch:
 
 permissions:
