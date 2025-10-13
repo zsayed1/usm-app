@@ -11,7 +11,7 @@ The application exposes a single health endpoint and **intentionally self-termin
 
 ```python
 from flask import Flask
-import threading, time, os
+import os
 
 app = Flask(__name__)
 
@@ -19,16 +19,12 @@ app = Flask(__name__)
 def health():
     return "OK", 200
 
-def self_destruct():
-    time.sleep(180)  # wait 3 minutes
-    print("💥 Simulating fatal error...")
-    os._exit(1)
-
 if __name__ == "__main__":
-    threading.Thread(target=self_destruct, daemon=True).start()
-    host = os.getenv("FLASK_BIND_HOST", "127.0.0.1")
+    # Bind host and port from env vars or use defaults
+    host = os.getenv("FLASK_BIND_HOST", "0.0.0.0")  # 0.0.0.0 to listen externally
     port = int(os.getenv("FLASK_PORT", 8080))
-    app.run(host=host, port=port)
+    # Enable threaded server for better concurrency
+    app.run(host=host, port=port, threaded=True)
 ```
 
 This behavior is used in combination with **Argo Rollouts** to test how the platform reacts to a failed deployment and automatically rolls back to a previous stable version.
@@ -159,5 +155,6 @@ helm install usm-app charts/helm-usm-app
 - ✅ `feature/brokenApp` branch triggers rollback scenarios without manual changes  
 
 This repository showcases a production-grade CI/CD + GitOps pipeline with built-in rollback safety — ideal for building confidence in your deployment workflows.
+
 
 
