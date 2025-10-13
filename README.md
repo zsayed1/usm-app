@@ -144,9 +144,8 @@ helm install usm-app charts/helm-usm-app
 1. Developer pushes code → **CI** pipeline runs security scans, Docker build, and Helm lint
 2. Merge into `dev`, `master`, or `feature/brokenApp` → **CD** pipeline builds image and chart
 3. Docker image and Helm chart pushed to **Amazon ECR**
-4. **ArgoCD** syncs the chart into the cluster
-5. **Argo Rollouts** manages deployment with canary strategy
-6. If the new version fails readiness → rollout aborts and **automatic rollback** happens
+4. **ArgoCD** syncs the chart into the cluster from https://github.com/zsayed1/usm-gitops-apps. 
+5. If the new version fails readiness → rollout aborts and **automatic rollback** happens
 
 ---
 
@@ -160,4 +159,5 @@ helm install usm-app charts/helm-usm-app
 - ✅ `feature/brokenApp` branch triggers rollback scenarios without manual changes  
 
 This repository showcases a production-grade CI/CD + GitOps pipeline with built-in rollback safety — ideal for building confidence in your deployment workflows.
+
 
