@@ -100,7 +100,7 @@ How to test rollback:
    git push origin feature/brokenApp
    ```
 
-3. This triggers the **CD pipeline**, which builds and pushes the broken image.
+3. This triggers the **CD pipeline**, which builds and pushes the broken image. This will just push the image, we need to make changes in the https://github.com/zsayed1/usm-gitops-apps to make sure we update the tag.
 
 4. Argo Rollouts attempts the deployment → the pod fails after 3 minutes → rollout **aborts and reverts** to the last healthy ReplicaSet.
 
@@ -160,3 +160,4 @@ helm install usm-app charts/helm-usm-app
 - ✅ `feature/brokenApp` branch triggers rollback scenarios without manual changes  
 
 This repository showcases a production-grade CI/CD + GitOps pipeline with built-in rollback safety — ideal for building confidence in your deployment workflows.
+
